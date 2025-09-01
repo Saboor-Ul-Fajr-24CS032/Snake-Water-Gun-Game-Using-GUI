@@ -1,0 +1,192 @@
+# Snake Water Gum Game GUI
+
+import random
+from tkinter import *
+from tkinter import messagebox
+from PIL import Image, ImageTk
+import requests
+import io
+
+root = Tk()
+root.geometry("855x555")
+root.resizable(False, False)
+root.title("Snake Water Gun Game")
+root.configure(bg= "#08A758")
+images={}
+
+canvas = Canvas(root, width=855, height=555, bg="#08A758",  highlightthickness=0)
+canvas.place(x=0, y=0)
+
+allimages= []
+def downloading():
+    
+    url = [
+        "https://play-lh.googleusercontent.com/N9shG5ADQHcXmozUk7LoqBm77zxBZXBQKlLJXhChYw3qhP64lY9B5DB4EzEkWuRWSNk",
+        "https://static.vecteezy.com/system/resources/previews/012/889/619/non_2x/pixel-art-hands-holding-water-drop-icon-for-8bit-game-on-white-background-vector.jpg",
+        "https://www.shutterstock.com/image-vector/pixel-art-pistol-pixelated-roulette-260nw-2366087299.jpg"
+    ]
+    for i in url :
+        response= requests.get(i)
+        img= Image.open(io.BytesIO(response.content))
+        allimages.append(img)
+
+
+
+#start button function
+def startgame():
+    canvas.delete("all")
+    for widget in root.winfo_children():
+        if widget != canvas:
+            widget.destroy()
+    buttonscreen()
+
+#actual game
+def game(human):
+    comp= random .randint(0,2)
+    result= "none"
+
+    # Snake = 1, Water = 2, Gun = 3
+    if human == comp:
+        result = "draw"
+    elif (human == 0 and comp == 1) or (human == 1 and comp == 2) or (human == 2 and comp == 0):
+        result = "win"
+    else:
+        result = "lose"
+    
+    show_result_screen(human, comp, result)
+
+#message box
+def show_info():
+    messagebox.showinfo(
+"Game Instructions", "Snake Drinks Water\nWater destroys Gun\nGun kills Snake\nThat's how The game works. Hope you enjoy it ")
+    
+#exit the function
+def exit_func(event=None):
+    ans=messagebox.askyesno("EXIT","Are You Sure? You want to EXIT.")
+    if ans:
+        root.destroy()
+
+
+#First Screen
+def firstscreen():
+
+    Label(root, text= "Welcome to Snake \nWater Gun Game", font=("Helvetica", 55 , "bold"),bg= "#08A758", fg= "#09351F" ).place(x=100, y=50)
+    #snake photo
+    canvas.create_rectangle(120, 250, 250, 400, fill="Yellow", outline="black", width=1)
+    images['snake'] = ImageTk.PhotoImage((allimages[0]).resize((120, 120)) )
+    canvas.create_image(185, 315, image=images['snake'])
+    snakeword= Label(root, text="Snake", bg="yellow", fg= "black", font= ("Helvetica", 12 , "bold"))
+    snakeword.place(x=160, y=375)
+    
+    #Water photo
+    canvas.create_rectangle(370, 250, 500, 400, fill="light blue", outline="black", width=1)
+    images['water'] = ImageTk.PhotoImage((allimages[1]).resize((120, 120)) )
+    canvas.create_image(435, 315, image=images['water'] )
+    waterword= Label(root, text="Water", bg="light blue", fg= "black", font= ("Helvetica", 12 , "bold"))
+    waterword.place(x=410, y=375)
+    
+    #Gun photo 
+    canvas.create_rectangle(620, 250, 750, 400, fill="Grey", outline="black", width=1)
+    images['gun'] = ImageTk.PhotoImage((allimages[2]).resize((120, 120)) )
+    canvas.create_image(685, 315, image=images['gun'])
+    gunword= Label(root, text="Gun", bg="grey", fg= "black", font= ("Helvetica", 12 , "bold"))
+    gunword.place(x=640, y=375)
+
+    #button for starting
+    Button(root, text= "START THE GAME ", font= ("Helvetica", 12 , "bold"), bg= "black", fg="white", command = startgame ).place(x= 350, y= 450 )
+
+    #button for help
+    Button(root, text="?", font=("Helvetica", 16, "bold"), bg="white", fg="black", command=show_info).place(x=800, y=490)
+
+
+
+def buttonscreen():
+    
+    Label(root, text= "Welcome to Snake \nWater Gun Game", font=("Helvetica", 55 , "bold"),bg= "#08A758", fg= "#09351F" ).place(x=100, y=50)
+
+    #snake button
+    snakel=canvas.create_rectangle(120, 250, 250, 400, fill="Yellow", outline="black", width=1)
+    images['snake'] = ImageTk.PhotoImage((allimages[0]).resize((120, 120)) )
+    snake_img=canvas.create_image(185, 315, image=images['snake'])
+    snakeword= Label(root, text="Snake", bg="yellow", fg= "black", font= ("Helvetica", 12 , "bold"))
+    snakeword.place(x=160, y=375)
+    canvas.tag_bind(snakel, "<Button-1>", lambda e: game(0)) ; canvas.tag_bind(snake_img, "<Button-1>", lambda e: game(0))
+    
+    #Water button
+    waterl=canvas.create_rectangle(370, 250, 500, 400, fill="light blue", outline="black", width=1)
+    images['water'] = ImageTk.PhotoImage((allimages[1]).resize((120, 120)))
+    water_img=canvas.create_image(435, 315, image=images['water'] )
+    waterword= Label(root, text="Water", bg="light blue", fg= "black", font= ("Helvetica", 12 , "bold"))
+    waterword.place(x=410, y=375)
+    canvas.tag_bind(waterl, "<Button-1>", lambda e: game(1)) ; canvas.tag_bind(water_img, "<Button-1>", lambda e: game(1))
+    
+    #Gun button
+    gunl=canvas.create_rectangle(620, 250, 750, 400, fill="Grey", outline="black", width=1)
+    images['gun'] = ImageTk.PhotoImage((allimages[2]).resize((120, 120)) )
+    gun_img=canvas.create_image(685, 315, image=images['gun'])
+    gunword= Label(root, text="Gun", bg="grey", fg= "black", font= ("Helvetica", 12 , "bold"))
+    gunword.place(x=640, y=375)
+    canvas.tag_bind(gun_img, "<Button-1>", lambda e: game(2))
+
+#for last screen
+def show_result_screen(human, comp, result):
+    # Clear screen
+    canvas.delete("all")
+    for widget in root.winfo_children():
+        if widget != canvas:
+            widget.destroy()
+
+    # Map numbers to names/images
+    names = ["Snake", "Water", "Gun"]
+    color= ["yellow", "Lightblue", "grey"]
+
+    # Player choice
+    Label(root, text=f"You Chose {names[human]}", font=("helvetica", 24, "bold"), bg="#08A758").place(x=100, y=50)
+    if(human==0):
+        canvas.create_rectangle(100, 170, 380, 450, fill=f"{color[0]}", outline="black", width=1)
+    elif(human==1):
+        canvas.create_rectangle(100, 170, 380, 450, fill=f"{color[1]}", outline="black", width=1)
+    else:
+        canvas.create_rectangle(100, 170, 380, 450, fill=f"{color[2]}", outline="black", width=1)
+
+    images['player'] = ImageTk.PhotoImage((allimages[human]).resize((250, 250)))
+    canvas.create_image(240, 310, image=images['player'])
+
+    # Computer choice
+    Label(root, text=f"Computer Chose {names[comp]}", font=("helvetica", 24, "bold"), bg="#08A758").place(x=480, y=50)
+    if(comp==0):
+        canvas.create_rectangle(480, 170, 760, 450, fill=f"{color[0]}", outline="black", width=1)
+    elif(comp==1):
+        canvas.create_rectangle(480, 170, 760, 450, fill=f"{color[1]}", outline="black", width=1)
+    else:
+        canvas.create_rectangle(480, 170, 760, 450, fill=f"{color[2]}", outline="black", width=1)
+
+    images['comp'] = ImageTk.PhotoImage((allimages[comp]).resize((250, 250)))
+    canvas.create_image(620, 310, image=images['comp'])
+
+    # Result message
+    if result == "win":
+        Label(root, text="You WIN! ", font=("helvetica", 28, "bold"), bg="#08A758").place(x=300, y=100)
+    elif result == "lose":
+        Label(root, text="You LOSE!", font=("helvetica", 28, "bold"), bg="#08A758").place(x=300, y=100)
+    else:
+        Label(root, text="It's a DRAW!", font=("helvetica", 28, "bold"), bg="#08A758").place(x=300, y=100)
+
+    #exit_btn= canvas.create_rectangle()
+    Button(root, text="Exit", font=("Helvetica", 16, "bold"), bg="#020202", fg="#A70852", command=exit_func).place(x=780, y=490 )
+
+    #button for new game
+    Button(root, text="🔄", font=("Helvetica", 16, "bold"), bg="#020101", fg="#FDFBFC", command=restart_secondsreen).place(x=730, y=490 )
+
+
+def restart_secondsreen():
+    canvas.delete("all")
+    for widget in root.winfo_children():
+        if widget != canvas:
+            widget.destroy()
+    buttonscreen()
+    
+
+downloading()
+firstscreen()
+root.mainloop()
