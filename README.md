@@ -27,6 +27,7 @@ Functions Explained:
 - exit_func() → Confirms exit and closes the app.
 
 Screenshot Example:
+
 <img width="854" height="587" alt="image" src="https://github.com/user-attachments/assets/6453aeac-a5bd-4bd0-b3fb-fe99249ab442" />
 
 Credits: 
